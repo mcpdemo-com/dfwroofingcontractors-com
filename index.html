@@ -125,7 +125,6 @@
   </div>
 </section>
 
-<!-- SERVICES -->
 <section class="section" style="background:var(--bg2)">
   <div class="section-inner">
     <span class="section-label">What We Do</span>
@@ -159,7 +158,6 @@
   </div>
 </section>
 
-<!-- SPLIT: WHY US + FORM -->
 <section class="section" id="contact">
   <div class="section-inner">
     <div class="split">
@@ -198,7 +196,7 @@
             <option>Inspection</option>
           </select>
           <textarea name="message" rows="3" placeholder="Any additional details (optional)"></textarea>
-          <button type="submit" class="btn-primary" style="width:100%">Send My Request →</button>
+          <button type="submit" class="btn-primary" style="width:100%" id="submitBtn">Send My Request →</button>
           <div class="success-msg" id="successMsg">✓ Request sent! We'll be in touch within 24 hours.</div>
           <p style="color:rgba(255,255,255,0.35);font-size:0.72rem;margin-top:0.75rem;text-align:center">By submitting you agree to our <a href="/legal/privacy.html" style="color:rgba(255,255,255,0.5)">Privacy Policy</a> and <a href="/legal/affiliate-disclaimer.html" style="color:rgba(255,255,255,0.5)">Affiliate Disclaimer</a>. You may be contacted by licensed contractors in our network.</p>
         </form>
@@ -207,7 +205,6 @@
   </div>
 </section>
 
-<!-- SERVICE AREAS -->
 <section class="section" style="background:var(--bg2)">
   <div class="section-inner">
     <span class="section-label">Where We Work</span>
@@ -233,7 +230,6 @@
   </div>
 </section>
 
-<!-- CTA STRIP -->
 <div class="cta-strip">
   <h2>Storm Damage? Don't Wait.</h2>
   <p>Every day without a proper inspection increases the risk of water damage inside your home. Request your free estimate today.</p>
@@ -275,10 +271,37 @@
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
-  document.getElementById('leadForm').addEventListener('submit', function(e) {
+  document.getElementById('leadForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    document.getElementById('successMsg').style.display = 'block';
-    this.reset();
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    const data = {
+      name: this.name.value,
+      phone: this.phone.value,
+      email: this.email.value,
+      address: this.address.value,
+      service: this.service.value,
+      message: this.message.value
+    };
+    try {
+      const res = await fetch('https://app.mcpcio.com/api/forms/4wfkgxbb/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        document.getElementById('successMsg').style.display = 'block';
+        this.reset();
+        btn.style.display = 'none';
+      } else {
+        throw new Error('Submit failed');
+      }
+    } catch(err) {
+      btn.textContent = 'Send My Request →';
+      btn.disabled = false;
+      alert('Something went wrong. Please email us at info@dfwroofingcontractors.com');
+    }
   });
 </script>
 </body>
