@@ -160,7 +160,7 @@
             <option>Just getting estimates</option>
           </select>
           <textarea name="message" rows="3" placeholder="Describe the issue or any additional details (optional)"></textarea>
-          <button type="submit" class="btn-primary" style="width:100%;font-size:1.05rem">Send My Free Estimate Request →</button>
+          <button type="submit" class="btn-primary" id="submitBtn" style="width:100%;font-size:1.05rem">Send My Free Estimate Request →</button>
           <div class="success-msg" id="successMsg">✓ Request received! A contractor will contact you within 24 hours.</div>
           <p style="color:rgba(255,255,255,0.35);font-size:0.72rem;margin-top:0.75rem;text-align:center">By submitting you agree to our <a href="/legal/privacy.html" style="color:rgba(255,255,255,0.5)">Privacy Policy</a> and <a href="/legal/affiliate-disclaimer.html" style="color:rgba(255,255,255,0.5)">Affiliate Disclaimer</a>. You may be contacted by licensed roofing contractors in our DFW network.</p>
         </form>
@@ -204,10 +204,38 @@
 
 <script>
   document.getElementById('yr').textContent = new Date().getFullYear();
-  document.getElementById('leadForm').addEventListener('submit', function(e) {
+  document.getElementById('leadForm').addEventListener('submit', async function(e) {
     e.preventDefault();
-    document.getElementById('successMsg').style.display = 'block';
-    this.reset();
+    const btn = document.getElementById('submitBtn');
+    btn.textContent = 'Sending...';
+    btn.disabled = true;
+    const data = {
+      name: this.name.value,
+      phone: this.phone.value,
+      email: this.email.value,
+      address: this.address.value,
+      service: this.service.value,
+      timeline: this.timeline.value,
+      message: this.message.value
+    };
+    try {
+      const res = await fetch('https://app.mcpcio.com/api/forms/4wfkgxbb/submit', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(data)
+      });
+      if (res.ok) {
+        document.getElementById('successMsg').style.display = 'block';
+        this.reset();
+        btn.style.display = 'none';
+      } else {
+        throw new Error('Submit failed');
+      }
+    } catch(err) {
+      btn.textContent = 'Send My Free Estimate Request →';
+      btn.disabled = false;
+      alert('Something went wrong. Please email us at info@dfwroofingcontractors.com');
+    }
   });
 </script>
 </body>
