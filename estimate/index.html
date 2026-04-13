@@ -102,28 +102,28 @@
         <div style="margin-top:2.5rem">
           <h3 style="margin-bottom:1.25rem">Why Homeowners Choose Us</h3>
           <div class="trust-item">
-            <div class="trust-icon">🔒</div>
+            <div class="trust-icon">&#128274;</div>
             <div>
               <h4>Licensed &amp; Insured</h4>
               <p>Every contractor in our network carries full liability and workers' compensation coverage. You're protected.</p>
             </div>
           </div>
           <div class="trust-item">
-            <div class="trust-icon">⚡</div>
+            <div class="trust-icon">&#9889;</div>
             <div>
               <h4>24-Hour Response</h4>
               <p>DFW storm season is no time to wait. We move fast — especially after hail or wind events.</p>
             </div>
           </div>
           <div class="trust-item">
-            <div class="trust-icon">📋</div>
+            <div class="trust-icon">&#128203;</div>
             <div>
               <h4>Insurance Claim Help</h4>
               <p>We work alongside your insurance adjuster to make sure you get the full scope of covered repairs.</p>
             </div>
           </div>
           <div class="trust-item">
-            <div class="trust-icon">📍</div>
+            <div class="trust-icon">&#128205;</div>
             <div>
               <h4>DFW Local</h4>
               <p>Not a national referral service. Contractors who live in Dallas-Fort Worth and know the local codes and weather.</p>
@@ -135,7 +135,7 @@
       <div>
         <form class="lead-form" id="leadForm">
           <h3>Request Your Free Estimate</h3>
-          <p class="form-sub">Respond within 24 hours · No obligation · 100% free</p>
+          <p class="form-sub">Respond within 24 hours &middot; No obligation &middot; 100% free</p>
           <div class="form-row">
             <input type="text" name="name" placeholder="Your full name" required />
             <input type="tel" name="phone" placeholder="Phone number" required />
@@ -160,8 +160,8 @@
             <option>Just getting estimates</option>
           </select>
           <textarea name="message" rows="3" placeholder="Describe the issue or any additional details (optional)"></textarea>
-          <button type="submit" class="btn-primary" id="submitBtn" style="width:100%;font-size:1.05rem">Send My Free Estimate Request →</button>
-          <div class="success-msg" id="successMsg">✓ Request received! A contractor will contact you within 24 hours.</div>
+          <button type="submit" class="btn-primary" id="submitBtn" style="width:100%;font-size:1.05rem">Send My Free Estimate Request &#8594;</button>
+          <div class="success-msg" id="successMsg">&#10003; Request received! A contractor will contact you within 24 hours.</div>
           <p style="color:rgba(255,255,255,0.35);font-size:0.72rem;margin-top:0.75rem;text-align:center">By submitting you agree to our <a href="/legal/privacy.html" style="color:rgba(255,255,255,0.5)">Privacy Policy</a> and <a href="/legal/affiliate-disclaimer.html" style="color:rgba(255,255,255,0.5)">Affiliate Disclaimer</a>. You may be contacted by licensed roofing contractors in our DFW network.</p>
         </form>
       </div>
@@ -216,15 +216,17 @@
       address: this.address.value,
       service: this.service.value,
       timeline: this.timeline.value,
-      message: this.message.value
+      message: this.message.value,
+      source: 'Estimate Page'
     };
     try {
-      const res = await fetch('https://app.mcpcio.com/api/forms/4wfkgxbb/submit', {
+      const res = await fetch('https://dfwroofing-api.robert-95a.workers.dev/submit', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(data)
       });
-      if (res.ok) {
+      const json = await res.json();
+      if (json.success) {
         document.getElementById('successMsg').style.display = 'block';
         this.reset();
         btn.style.display = 'none';
@@ -232,7 +234,7 @@
         throw new Error('Submit failed');
       }
     } catch(err) {
-      btn.textContent = 'Send My Free Estimate Request →';
+      btn.textContent = 'Send My Free Estimate Request \u2192';
       btn.disabled = false;
       alert('Something went wrong. Please email us at info@dfwroofingcontractors.com');
     }
